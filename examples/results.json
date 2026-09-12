@@ -1,0 +1,20 @@
+{
+  "summary": "25/25 correct (100.0%)",
+  "mode": "debate",
+  "rounds": 2,
+  "provider": "mock",
+  "outputs": [
+    {
+      "question_id": 1,
+      "question": "What is the derivative of x^2?",
+      "reference_answer": "2x",
+      "final_answer": "Answer: 2x.",
+      "correct": true,
+      "agents": {
+        "solver": "Answer: 2x.",
+        "rounds": [{"round": 1, "critic": "Check the response.", "revision": "Answer: 2x."}],
+        "judge": "Reference match assessment: the expected answer is 2x."
+      }
+    }
+  ]
+}
