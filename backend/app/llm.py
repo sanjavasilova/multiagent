@@ -80,6 +80,43 @@ async def complete(prompt: str, question: str = "", reference: str = "",
 
 
 def objective_match(answer: str, reference: str) -> bool:
-    norm = lambda value: re.sub(r"[^a-z0-9]+", " ", value.lower()).strip()
-    a, r = norm(answer), norm(reference)
-    return bool(r and (r in a or a in r))
+    a = _canonical_tokens(answer)
+    r = _canonical_tokens(reference)
+    if not r:
+        return False
+    if _substring(a, r) or _substring(r, a):
+        return True
+    return _is_subsequence(a, r) or _is_subsequence(r, a)
+
+
+def _canonical_tokens(value: str) -> list[str]:
+    value = value.lower()
+    for pattern, replacement in (
+        (r"\b(km/h|kph)\b", " kilometers per hour "),
+        (r"\bm/s\b", " meters per second "),
+        (r"\bkm\b", " kilometers "),
+        (r"\bkg\b", " kilograms "),
+        (r"\bmph\b", " miles per hour "),
+        (r"°c\b", " degrees celsius "),
+        (r"°f\b", " degrees fahrenheit "),
+        (r"\bdeg\.?\b", " degrees "),
+    ):
+        value = re.sub(pattern, replacement, value)
+    value = re.sub(r"(\d+\.\d*?)(0+)(?=\D|$)", r"\1", value)
+    return re.sub(r"[^a-z0-9]+", " ", value.lower()).strip().split()
+
+
+def _substring(a: list[str], r: list[str]) -> bool:
+    return " ".join(r) in " ".join(a)
+
+
+def _is_subsequence(needle: list[str], haystack: list[str]) -> bool:
+    it = iter(haystack)
+    return all(any(_token_eq(token, cand) for cand in it) for token in needle)
+
+
+def _token_eq(a: str, b: str) -> bool:
+    try:
+        return float(a) == float(b)
+    except ValueError:
+        return a == b

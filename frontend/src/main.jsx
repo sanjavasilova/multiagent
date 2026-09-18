@@ -45,7 +45,7 @@ function App() {
     <button className={tab === 'evaluation' ? 'active' : ''} onClick={() => setTab('evaluation')}>Evaluation</button>
   </nav><span className="status">● {import.meta.env.VITE_API_URL ? 'Configured API' : 'Demo provider'}</span></header>
   <main>{tab === 'analysis' ? <section><div className="hero"><p className="eyebrow">RESEARCH WORKBENCH</p><h1>Measure reasoning,<br/><em>not just answers.</em></h1><p>Compare a direct answer with an inspectable solver–critic–revision–judge debate.</p></div>
-    <div className="card controls"><label>Question (optional)<textarea value={question} onChange={e => setQuestion(e.target.value)} placeholder="Leave blank to run the 25-question dataset" /></label>
+    <div className="card controls"><label>Question (optional)<textarea value={question} onChange={e => setQuestion(e.target.value)} placeholder="Leave blank to run the 65-question dataset" /></label>
       <label>Method<select value={mode} onChange={e => setMode(e.target.value)}><option value="debate">Multi-agent debate</option><option value="single">Single agent</option></select></label>
       <label>Rounds<input type="number" min="1" max="5" value={rounds} onChange={e => setRounds(Number(e.target.value))}/></label>
       <button className="primary" onClick={execute} disabled={loading}>{loading ? 'Running…' : 'Run analysis →'}</button>

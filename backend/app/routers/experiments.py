@@ -93,6 +93,10 @@ async def execute(request: RunRequest):
         selected = [{"id": 0, "question": request.question, "reference_answer": "", "category": "custom"}]
     else:
         ids = set(request.question_ids or [q["id"] for q in QUESTIONS])
+        known = {q["id"] for q in QUESTIONS}
+        missing = sorted(ids - known)
+        if missing:
+            raise HTTPException(400, f"Unknown question ID(s): {missing}")
         selected = [q for q in QUESTIONS if q["id"] in ids]
     if not selected:
         raise HTTPException(400, "No valid question IDs supplied")
