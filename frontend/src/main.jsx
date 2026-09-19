@@ -13,6 +13,7 @@ function App() {
   const [question, setQuestion] = useState('')
   const [mode, setMode] = useState('debate')
   const [rounds, setRounds] = useState(2)
+  const [compareCount, setCompareCount] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -33,7 +34,8 @@ function App() {
   const compare = async () => {
     setLoading(true); setError(''); setComparison(null); setRun(null); setTab('evaluation')
     try {
-      const response = await fetch(`${API}/experiments/compare`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ rounds, question_ids: questions.slice(0, 5).map(q => q.id), name: 'Paired comparison' }) })
+      const count = compareCount ?? questions.length
+      const response = await fetch(`${API}/experiments/compare`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ rounds, question_ids: questions.slice(0, Math.max(1, Math.min(count, questions.length))).map(q => q.id), name: 'Paired comparison' }) })
       const data = await response.json().catch(() => ({}))
       if (!response.ok) throw new Error(data.detail || 'Comparison failed')
       setComparison(data); setRun(data.debate); refresh(); setTab('evaluation')
@@ -48,6 +50,7 @@ function App() {
     <div className="card controls"><label>Question (optional)<textarea value={question} onChange={e => setQuestion(e.target.value)} placeholder="Leave blank to run the 65-question dataset" /></label>
       <label>Method<select value={mode} onChange={e => setMode(e.target.value)}><option value="debate">Multi-agent debate</option><option value="single">Single agent</option></select></label>
       <label>Rounds<input type="number" min="1" max="5" value={rounds} onChange={e => setRounds(Number(e.target.value))}/></label>
+      <label>Comparison size<input type="number" min="1" max={questions.length || 65} value={compareCount ?? (questions.length || 65)} onChange={e => setCompareCount(Number(e.target.value))} title="How many questions the paired comparison should run" /></label>
       <button className="primary" onClick={execute} disabled={loading}>{loading ? 'Running…' : 'Run analysis →'}</button>
       <button className="secondary" onClick={compare} disabled={loading}>Run paired comparison</button></div>
     {error && <div className="error">{error}</div>}<div className="grid"><div className="card"><small>QUESTION BANK</small><strong>{questions.length}</strong><span>seeded reference questions</span></div><div className="card"><small>PIPELINE</small><strong>{mode === 'debate' ? '4 agents' : '1 agent'}</strong><span>outputs stored for inspection</span></div><div className="card"><small>STORAGE</small><strong>SQLite</strong><span>reproducible experiment records</span></div></div></section>
