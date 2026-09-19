@@ -16,7 +16,7 @@ FastAPI routers -> experiment service -> configurable LLM provider
 ```
 
 The backend is organized under `backend/app`: `llm.py` contains the provider adapter
-(mock or OpenAI-compatible), `dataset.py` contains 25 labeled questions, `db.py`
+(mock or OpenAI-compatible), `dataset.py` contains 65 labeled questions, `db.py`
 contains persistence, and `routers/experiments.py` runs the single/debate pipelines.
 The frontend is a small Vite app in `frontend/src`.
 
@@ -55,7 +55,7 @@ transparent baseline, not a substitute for human evaluation.
 
 ## Experimental methodology
 
-Use `Run paired comparison` for a controlled run over all 25 questions. Keep model,
+Use `Run paired comparison` for a controlled run over all 65 questions. Keep model,
 temperature, dataset, and question order fixed; change only the method and debate
 round count. Report accuracy and error cases alongside average time, calls, and
 tokens. The mock provider is useful for wiring validation but is not evidence about
